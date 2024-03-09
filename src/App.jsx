@@ -58,9 +58,7 @@ class App extends React.Component {
         </div>
         <ToDoList
           tasks={this.state.todoTasks}
-          onComplete={this.handleCompleteTask}
-          onDelete={(index) => this.handleDeleteTask(index, 'todoTasks')}
-          onMoveToToDo={this.handleMoveToToDo}
+          onComplete={this.handleCompleteTask} 
         />
         <CompletedList
           tasks={this.state.completedTasks}

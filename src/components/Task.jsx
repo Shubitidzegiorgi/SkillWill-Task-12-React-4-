@@ -2,6 +2,11 @@ import React from 'react';
 import '../App.css';
 
 class Task extends React.Component {
+  
+  shouldComponentUpdate(nextProps) {
+    return this.props.task !== nextProps.task || this.props.showFinishButton !== nextProps.showFinishButton;
+  }
+
   render() {
     const { task, onComplete, onDelete, onMoveToToDo, showFinishButton } = this.props;
 
@@ -17,5 +22,3 @@ class Task extends React.Component {
 }
 
 export default Task;
-
-

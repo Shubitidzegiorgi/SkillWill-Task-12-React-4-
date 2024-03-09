@@ -1,8 +1,11 @@
 import React from 'react';
 import Task from './Task';
 
-
 class ToDoList extends React.Component {
+  shouldComponentUpdate(nextProps) {
+    return this.props.tasks !== nextProps.tasks;
+  }
+
   render() {
     const { tasks, onComplete } = this.props;
 
@@ -23,6 +26,4 @@ class ToDoList extends React.Component {
 }
 
 export default ToDoList;
-
-
 

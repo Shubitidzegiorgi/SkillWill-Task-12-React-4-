@@ -2,6 +2,10 @@ import React from 'react';
 import Task from './Task';
 
 class CompletedList extends React.Component {
+  shouldComponentUpdate(nextProps) {
+    return this.props.tasks !== nextProps.tasks;
+  }
+
   render() {
     const { tasks, onDelete, onMoveToToDo } = this.props;
 
