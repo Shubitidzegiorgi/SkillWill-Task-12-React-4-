@@ -1,73 +1,62 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import ToDoList from './components/ToDoList';
 import CompletedList from './components/CompletedList';
 
-class App extends React.Component {
-  state = {
-    todoTasks: [],
-    completedTasks: [],
-    newTask: '',
+const App = () => {
+  const [todoTasks, setTodoTasks] = useState([]);
+  const [completedTasks, setCompletedTasks] = useState([]);
+  const [newTask, setNewTask] = useState('');
+
+  const handleInputChange = (event) => {
+    setNewTask(event.target.value);
   };
 
-  handleInputChange = (event) => {
-    this.setState({ newTask: event.target.value });
-  };
-
-  handleAddTask = () => {
-    if (this.state.newTask.trim() !== '') {
-      this.setState((prevState) => ({
-        todoTasks: [...prevState.todoTasks, prevState.newTask],
-        newTask: '',
-      }));
+  const handleAddTask = () => {
+    if (newTask.trim() !== '') {
+      setTodoTasks((prevTasks) => [...prevTasks, newTask]);
+      setNewTask('');
     }
   };
 
-  handleCompleteTask = (index) => {
-    const completedTask = this.state.todoTasks[index];
-    this.setState((prevState) => ({
-      todoTasks: prevState.todoTasks.filter((_, i) => i !== index),
-      completedTasks: [...prevState.completedTasks, completedTask],
-    }));
-  };
+  const handleCompleteTask = useCallback((index) => {
+    const completedTask = todoTasks[index];
+    setTodoTasks((prevTasks) => prevTasks.filter((_, i) => i !== index));
+    setCompletedTasks((prevTasks) => [...prevTasks, completedTask]);
+  }, [todoTasks]);
 
-  handleDeleteTask = (index, type) => {
-    this.setState((prevState) => ({
-      [type]: prevState[type].filter((_, i) => i !== index),
-    }));
-  };
+  const handleDeleteTask = useCallback((index, type) => {
+    if (type === 'completedTasks') {
+      setCompletedTasks((prevTasks) => prevTasks.filter((_, i) => i !== index));
+    } else {
+      setTodoTasks((prevTasks) => prevTasks.filter((_, i) => i !== index));
+    }
+  }, []);
 
-  handleMoveToToDo = (index) => {
-    const task = this.state.completedTasks[index];
-    this.setState((prevState) => ({
-      completedTasks: prevState.completedTasks.filter((_, i) => i !== index),
-      todoTasks: [...prevState.todoTasks, task],
-    }));
-  };
+  const handleMoveToToDo = useCallback((index) => {
+    const task = completedTasks[index];
+    setCompletedTasks((prevTasks) => prevTasks.filter((_, i) => i !== index));
+    setTodoTasks((prevTasks) => [...prevTasks, task]);
+  }, [completedTasks]);
 
-  render() {
-    return (
-      <div className="app">
-        <div className="task-input">
-          <input
-            type="text"
-            value={this.state.newTask}
-            onChange={this.handleInputChange}
-            placeholder="Enter a new task"
-          />
-          <button onClick={this.handleAddTask}>Add Task</button>
-        </div>
-        <ToDoList
-          tasks={this.state.todoTasks}
-          onComplete={this.handleCompleteTask} 
+  return (
+    <div className="app">
+      <div className="task-input">
+        <input
+          type="text"
+          value={newTask}
+          onChange={handleInputChange}
+          placeholder="Enter a new task"
         />
-        <CompletedList
-          tasks={this.state.completedTasks}
-          onDelete={(index) => this.handleDeleteTask(index, 'completedTasks')}
-          onMoveToToDo={this.handleMoveToToDo}
-        />
+        <button onClick={handleAddTask}>Add Task</button>
       </div>
-    );
-  }
-}
+      <ToDoList tasks={todoTasks} onComplete={handleCompleteTask} />
+      <CompletedList
+        tasks={completedTasks}
+        onDelete={(index) => handleDeleteTask(index, 'completedTasks')}
+        onMoveToToDo={handleMoveToToDo}
+      />
+    </div>
+  );
+};
 
 export default App;
